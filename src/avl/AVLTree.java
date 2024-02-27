@@ -60,6 +60,22 @@ public class AVLTree {
     return successor;
   }
 
+  private void rotate(Node node) {
+    if (node.getBalanceFactor() == 2) {
+      if (node.getLeft().getBalanceFactor() >= 0) {
+        rightRotation(node);
+      } else {
+        doubleRightRotation(node);
+      }
+    } else if (node.getBalanceFactor() == -2) {
+      if (node.getRight().getBalanceFactor() <= 0) {
+        leftRotation(node);
+      } else {
+        doubleLeftRototion(node);
+      }
+    }
+  }
+
   private void leftRotation(Node node) {
     Node right = node.getRight();
 
@@ -69,13 +85,19 @@ public class AVLTree {
     }
 
     right.setLeft(node);
-    right.setAbove(node.getAbove());
-
-    node.setAbove(right);
 
     if (isRoot(node)) {
       root = right;
+      right.setAbove(null);
+    } else {
+      right.setAbove(node.getAbove());
     }
+
+    int newNodeBalanceFactor = node.getBalanceFactor() + 1 - Math.min(node.getBalanceFactor(), 0);
+    int newRightBalanceFactor = right.getBalanceFactor() + 1 + Math.max(newNodeBalanceFactor, 0);
+
+    node.setBalanceFactor(newNodeBalanceFactor);
+    right.setBalanceFactor(newRightBalanceFactor);
   }
 
   private void rightRotation(Node node) {
@@ -87,12 +109,12 @@ public class AVLTree {
     }
 
     left.setRight(node);
-    left.setAbove(node.getAbove());
-
-    node.setAbove(left);
 
     if (isRoot(node)) {
       root = left;
+      left.setAbove(null);
+    } else {
+      left.setAbove(node.getAbove());
     }
   }
 
@@ -106,48 +128,11 @@ public class AVLTree {
     rightRotation(node);
   }
 
-  // private void updateBalanceFactorAfterInsertion(Node node, Node parent) {
-  // // System.out.println("node: " + node);
-  // // System.out.println("\nparent: " + parent);
+  private void updateBalanceFactorAfterInsertion(Node node, Node parent) {}
 
-  // if (node.isLeft(parent)) {
-  // // System.out.println(node.getKey());
-  // parent.increaseBalanceFactor();
+  private void updateBalanceFactorAfterDeletion(Node node, Node parent) {}
 
-  // if (isRoot(parent)) {
-  // // System.out.println("era pra sair");
-  // return;
-  // }
-
-  // else if (parent.balanceFactor() != 0) {
-  // // System.out.println("teste: " + parent);
-  // updateBalanceFactorAfterInsertion(parent, parent.getAbove());
-  // return;
-  // }
-
-  // }
-
-  // else if (node.isRight(parent)) {
-  // parent.decreaseBalanceFactor();
-
-  // if (isRoot(parent)) {
-  // // System.out.println("era pra sair");
-  // return;
-  // }
-
-  // else if (parent.balanceFactor() == 0) {
-  // updateBalanceFactorAfterInsertion(parent, parent.getAbove());
-  // return;
-  // }
-
-  // }
-
-  // // System.out.println("node: " + node);
-  // // System.out.println("\nparent: " + parent);
-  // }
-
-  // private void updateBalanceFactorAfterDeletion(Node node, Node parent) {
-  // }
+  private void rebalance() {}
 
   private Node find(int key, Node current) {
     if (key == current.getKey()) {

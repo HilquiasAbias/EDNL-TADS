@@ -1,3 +1,6 @@
+newBalB = a.fb + 1 - Math.min(a.fb, 0);
+newBalA = b.fb + 1 + Math.max(newBalB, 0);
+
              10
          5        15
       3    7    12    17
