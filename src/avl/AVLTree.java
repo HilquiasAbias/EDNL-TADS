@@ -65,19 +65,20 @@ public class AVLTree {
   }
 
   private void rotate(Node node) {
-    System.out.println("rotate");
     if (node.getBalanceFactor() == 2) {
       if (node.getLeft().getBalanceFactor() >= 0) {
+        System.out.println("Nó " + node.getKey() + " desbalanceado, rotoção simples a direita");
         rightRotation(node);
       } else {
+        System.out.println("Nó " + node.getKey() + " desbalanceado, rotoção dupla a direita");
         doubleRightRotation(node);
       }
     } else if (node.getBalanceFactor() == -2) {
       if (node.getRight().getBalanceFactor() <= 0) {
-        System.out.println("res");
-
+        System.out.println("Nó " + node.getKey() + " desbalanceado, rotoção simples a esquerda");
         leftRotation(node);
       } else {
+        System.out.println("Nó " + node.getKey() + " desbalanceado, rotoção dupla a esquerda");
         doubleLeftRototion(node);
       }
     }
@@ -90,11 +91,12 @@ public class AVLTree {
     if (hasLeft(right)) {
       node.setRight(right.getLeft());
       right.getLeft().setAbove(node);
+    } else {
+      node.setRight(null);
     }
 
     right.setLeft(node);
     node.setAbove(right);
-    node.setRight(null);
 
     if (isRoot(node)) {
       root = right;
@@ -103,11 +105,15 @@ public class AVLTree {
       right.setAbove(node.getAbove());
     }
 
-    // int newNodeBalanceFactor = node.getBalanceFactor() + 1 - Math.min(node.getBalanceFactor(), 0);
-    // int newRightBalanceFactor = right.getBalanceFactor() + 1 + Math.max(newNodeBalanceFactor, 0);
+    int newNodeBalanceFactor = node.getBalanceFactor() + 1 - Math.min(right.getBalanceFactor(), 0);
+    int newRightBalanceFactor = right.getBalanceFactor() + 1 + Math.max(newNodeBalanceFactor, 0);
 
-    // node.setBalanceFactor(newNodeBalanceFactor);
-    // right.setBalanceFactor(newRightBalanceFactor);
+    node.setBalanceFactor(newNodeBalanceFactor);
+    right.setBalanceFactor(newRightBalanceFactor);
+
+    System.out.println(node);
+    System.out.println(node.getLeft());
+    System.out.println(node.getRight());
   }
 
   private void rightRotation(Node node) {
@@ -116,11 +122,12 @@ public class AVLTree {
     if (hasRight(left)) {
       node.setLeft(left.getRight());
       left.getRight().setAbove(node);
+    } else {
+      node.setLeft(null);
     }
 
     left.setRight(node);
     node.setAbove(left);
-    node.setLeft(null);
 
     if (isRoot(node)) {
       root = left;
@@ -128,6 +135,12 @@ public class AVLTree {
     } else {
       left.setAbove(node.getAbove());
     }
+
+    int newNodeBalanceFactor = node.getBalanceFactor() - 1 - Math.max(left.getBalanceFactor(), 0);
+    int newRightBalanceFactor = left.getBalanceFactor() - 1 + Math.min(newNodeBalanceFactor, 0);
+
+    node.setBalanceFactor(newNodeBalanceFactor);
+    left.setBalanceFactor(newRightBalanceFactor);
   }
 
   private void doubleLeftRototion(Node node) {
@@ -142,14 +155,12 @@ public class AVLTree {
 
   private void updateBalanceFactorAfterInsertion(Node node) {
     if (node.getAbove().isRight(node)) {
-      System.out.println(node.getBalanceFactor());
       node.getAbove().decreaseBalanceFactor();
     } else {
       node.getAbove().increaseBalanceFactor();
     }
 
     if (this.isUnbalanced(node.getAbove())) {
-      System.out.println("Desbalanceado");
       this.rotate(node.getAbove());
       return;
     } else if (node.getAbove().getBalanceFactor() == 0 || isRoot(node.getAbove())) {
@@ -160,8 +171,6 @@ public class AVLTree {
   }
 
   private void updateBalanceFactorAfterDeletion(Node node) {}
-
-  private void rebalance() {}
 
   private Node find(int key, Node current) {
     if (key == current.getKey()) {
@@ -212,12 +221,15 @@ public class AVLTree {
     try {
       Node node = new Node(key, value);
       Node lastNode = findForInsert(key);
+      System.out.println("last before " + lastNode);
 
       if (key < lastNode.getKey()) {
         lastNode.setLeft(node);
       } else {
         lastNode.setRight(node);
       }
+
+      System.out.println("last after " + lastNode);
 
       node.setAbove(lastNode);
       this.updateBalanceFactorAfterInsertion(node);
