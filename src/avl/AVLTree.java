@@ -50,42 +50,49 @@ public class AVLTree {
     return node.getAbove() != null;
   }
 
+  private boolean onlyHaveLeftNode(Node node) {
+    return this.hasLeft(node) && !this.hasRight(node);
+  }
+
+  private boolean onlyHaveRightNode(Node node) {
+    return !this.hasLeft(node) && this.hasRight(node);
+  }
+
   private boolean isUnbalanced(Node node) {
     return node.getBalanceFactor() == 2 || node.getBalanceFactor() == -2;
   }
 
   private Node successor(Node node) {
-    Node successor = node.getRight();
-
-    while (!this.hasLeft(successor)) {
-      successor = successor.getLeft();
+    if (hasRight(node)) {
+      Node successor = node.getRight();
+  
+      while (!this.hasLeft(successor)) {
+        successor = successor.getLeft();
+      }
+  
+      return successor;
     }
 
-    return successor;
+    return null; // TODO: in order
   }
 
   private void rotate(Node node) {
     if (node.getBalanceFactor() == 2) {
       if (node.getLeft().getBalanceFactor() >= 0) {
-        System.out.println("Nó " + node.getKey() + " desbalanceado, rotoção simples a direita");
         rightRotation(node);
       } else {
-        System.out.println("Nó " + node.getKey() + " desbalanceado, rotoção dupla a direita");
         doubleRightRotation(node);
       }
     } else if (node.getBalanceFactor() == -2) {
       if (node.getRight().getBalanceFactor() <= 0) {
-        System.out.println("Nó " + node.getKey() + " desbalanceado, rotoção simples a esquerda");
         leftRotation(node);
       } else {
-        System.out.println("Nó " + node.getKey() + " desbalanceado, rotoção dupla a esquerda");
         doubleLeftRototion(node);
       }
     }
   }
 
   private void leftRotation(Node node) {
-    System.out.println(node);
     Node right = node.getRight();
 
     if (hasLeft(right)) {
@@ -94,26 +101,23 @@ public class AVLTree {
     } else {
       node.setRight(null);
     }
-
-    right.setLeft(node);
-    node.setAbove(right);
-
+    
     if (isRoot(node)) {
       root = right;
       right.setAbove(null);
     } else {
       right.setAbove(node.getAbove());
+      node.getAbove().setRight(right);
     }
+    
+    right.setLeft(node);
+    node.setAbove(right);
 
     int newNodeBalanceFactor = node.getBalanceFactor() + 1 - Math.min(right.getBalanceFactor(), 0);
     int newRightBalanceFactor = right.getBalanceFactor() + 1 + Math.max(newNodeBalanceFactor, 0);
 
     node.setBalanceFactor(newNodeBalanceFactor);
     right.setBalanceFactor(newRightBalanceFactor);
-
-    System.out.println(node);
-    System.out.println(node.getLeft());
-    System.out.println(node.getRight());
   }
 
   private void rightRotation(Node node) {
@@ -125,16 +129,17 @@ public class AVLTree {
     } else {
       node.setLeft(null);
     }
-
-    left.setRight(node);
-    node.setAbove(left);
-
+    
     if (isRoot(node)) {
       root = left;
       left.setAbove(null);
     } else {
       left.setAbove(node.getAbove());
+      node.getAbove().setRight(left);
     }
+    
+    left.setRight(node);
+    node.setAbove(left);
 
     int newNodeBalanceFactor = node.getBalanceFactor() - 1 - Math.max(left.getBalanceFactor(), 0);
     int newRightBalanceFactor = left.getBalanceFactor() - 1 + Math.min(newNodeBalanceFactor, 0);
@@ -221,15 +226,12 @@ public class AVLTree {
     try {
       Node node = new Node(key, value);
       Node lastNode = findForInsert(key);
-      System.out.println("last before " + lastNode);
 
       if (key < lastNode.getKey()) {
         lastNode.setLeft(node);
       } else {
         lastNode.setRight(node);
       }
-
-      System.out.println("last after " + lastNode);
 
       node.setAbove(lastNode);
       this.updateBalanceFactorAfterInsertion(node);
@@ -262,30 +264,12 @@ public class AVLTree {
       Node parent = node.getAbove();
 
       if (node.isLeaf()) {
-        if (parent.isLeft(node)) {
-          parent.setLeft(null);
-        } else {
-          parent.setRight(null);
-        }
-      }
-
-      else if (!this.hasLeft(node)) {
-        if (parent.isLeft(node)) {
-          parent.setLeft(node.getRight());
-        } else {
-          parent.setRight(node.getRight());
-        }
-      }
-
-      else if (!this.hasRight(node)) {
-        if (parent.isLeft(node)) {
-          parent.setLeft(node.getLeft());
-        } else {
-          parent.setRight(node.getLeft());
-        }
-      }
-
-      else {
+        deleteWhenIsLeaf(node);
+      } else if (onlyHaveLeftNode(node)) {
+        deleteWhenOnlyHaveLeftNode(node);
+      } else if (onlyHaveRightNode(node)) {
+        deleteWhenOnlyHaveRightNode(node);
+      } else {
         Node successor = successor(node);
         Node successorParent = successor.getAbove();
 
@@ -305,6 +289,36 @@ public class AVLTree {
     } catch (NodeNotFoundException e) {
       System.out.println(e.getMessage());
       return null;
+    }
+  }
+
+  private void deleteWhenIsLeaf(Node node) {
+    Node parent = node.getAbove();
+
+    if (parent.isLeft(node)) {
+      parent.setLeft(null);
+    } else {
+      parent.setRight(null);
+    }
+  }
+
+  private void deleteWhenOnlyHaveLeftNode(Node node) {
+    Node parent = node.getAbove(); // TODO: get sucessor in order
+    
+    if (parent.isLeft(node)) {
+      parent.setLeft(node.getRight());
+    } else {
+      parent.setRight(node.getRight());
+    }
+  }
+
+  private void deleteWhenOnlyHaveRightNode(Node node) {
+    Node parent = node.getAbove(); // TODO: get sucessor in order
+
+    if (parent.isLeft(node)) {
+      parent.setLeft(node.getLeft());
+    } else {
+      parent.setRight(node.getLeft());
     }
   }
 
