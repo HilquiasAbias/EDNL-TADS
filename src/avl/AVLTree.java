@@ -65,15 +65,15 @@ public class AVLTree {
   private Node successor(Node node) {
     if (hasRight(node)) {
       Node successor = node.getRight();
-  
-      while (!this.hasLeft(successor)) {
+
+      while (this.hasLeft(successor)) {
         successor = successor.getLeft();
       }
-  
+
       return successor;
     }
 
-    return null; // TODO: in order
+    return node;
   }
 
   private void rotate(Node node) {
@@ -167,6 +167,7 @@ public class AVLTree {
 
     if (this.isUnbalanced(node.getAbove())) {
       this.rotate(node.getAbove());
+
       return;
     } else if (node.getAbove().getBalanceFactor() == 0 || isRoot(node.getAbove())) {
       return;
@@ -261,30 +262,14 @@ public class AVLTree {
   public Node delete(int key) {
     try {
       Node node = findForDelete(key);
-      Node parent = node.getAbove();
 
       if (node.isLeaf()) {
         deleteWhenIsLeaf(node);
-      } else if (onlyHaveLeftNode(node)) {
-        deleteWhenOnlyHaveLeftNode(node);
-      } else if (onlyHaveRightNode(node)) {
-        deleteWhenOnlyHaveRightNode(node);
       } else {
-        Node successor = successor(node);
-        Node successorParent = successor.getAbove();
-
-        if (successorParent.isLeft(successor)) {
-          successorParent.setLeft(successor.getRight());
-        } else {
-          successorParent.setRight(successor.getRight());
-        }
-
-        node.setKey(successor.getKey());
-        node.setValue(successor.getValue());
+        deleteWhenIsNotLeaf(node);
       }
 
       size--;
-
       return node;
     } catch (NodeNotFoundException e) {
       System.out.println(e.getMessage());
@@ -302,23 +287,33 @@ public class AVLTree {
     }
   }
 
-  private void deleteWhenOnlyHaveLeftNode(Node node) {
-    Node parent = node.getAbove(); // TODO: get sucessor in order
+  private void deleteWhenIsNotLeaf(Node node) {
+    //System.out.println("delete: " + node.getKey());
+    Node parent = node.getAbove();
+    //System.out.println("parent: " + parent.getKey());
     
-    if (parent.isLeft(node)) {
-      parent.setLeft(node.getRight());
-    } else {
-      parent.setRight(node.getRight());
-    }
-  }
-
-  private void deleteWhenOnlyHaveRightNode(Node node) {
-    Node parent = node.getAbove(); // TODO: get sucessor in order
-
-    if (parent.isLeft(node)) {
+    if (!hasRight(node)) {
       parent.setLeft(node.getLeft());
+      node.getLeft().setAbove(parent);
     } else {
-      parent.setRight(node.getLeft());
+      Node sucessor = successor(node);
+      //System.out.println("successor: " + sucessor.getKey());
+      Node aboveSuccessor = sucessor.getAbove();
+
+      if (parent.isLeft(node)) {
+        parent.setLeft(sucessor);
+        sucessor.setAbove(parent);
+      } else {
+        parent.setRight(node.getRight());
+        sucessor.setAbove(parent);
+      }
+
+      if (hasLeft(node)) {
+        sucessor.setLeft(node.getLeft());
+        node.getLeft().setAbove(sucessor);
+      }
+
+      updateBalanceFactorAfterDeletion(aboveSuccessor);
     }
   }
 

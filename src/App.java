@@ -4,20 +4,25 @@ public class App {
     public static void main(String[] args) throws Exception {
         AVLTree tree = new AVLTree();
 
-        // System.out.println("RSD:\n")
-        // tree.insert(6, "6");
-        // tree.insert(5, "5");
-        // tree.insert(4, "4");
+        tree.insert(10, "dez");
+        tree.insert(5, "cinco");
+        tree.insert(15, "quinze");
+        tree.insert(2, "dois");
+        tree.insert(8, "oito");
+        tree.insert(22, "vinte e dois");
+
+        // System.out.println(tree.search(10));
         // System.out.println(tree.search(5));
-        // System.out.println(tree.search(4));
+        // System.out.println(tree.search(15));
+        // System.out.println(tree.search(2));
         // System.out.println(tree.search(8));
+        // System.out.println(tree.search(22));
 
-        // System.out.println("RSE:\n")
-        // tree.insert(8, "8");
-        // tree.insert(9, "9");
-        // System.out.println(tree.search(6));
-        // System.out.println(tree.search(9));
+        tree.insert(25, "vinte e cinco");
+        System.out.println(tree.search(25));
 
-        
+        tree.delete(5);
+        System.out.println(tree.search(8));
+        System.out.println(tree.search(5));
     }
 }
