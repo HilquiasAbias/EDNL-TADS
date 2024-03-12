@@ -19,10 +19,22 @@ public class App {
         // System.out.println(tree.search(22));
 
         tree.insert(25, "vinte e cinco");
-        System.out.println(tree.search(25));
+        //System.out.println(tree.search(25));
 
         tree.delete(5);
-        System.out.println(tree.search(8));
+        tree.delete(8);
+        //System.out.println(tree.search(8));
+        //System.out.println(tree.search(5));
+
+        System.out.println(tree.search(10));
+        //System.out.println(tree.search(8));
+        System.out.println(tree.search(22));
+        System.out.println(tree.search(2));
+        System.out.println(tree.search(15));
+        System.out.println(tree.search(25));
+
+        System.out.println("--------------------------------------------");
         System.out.println(tree.search(5));
+
     }
 }

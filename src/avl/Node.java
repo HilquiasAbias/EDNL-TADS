@@ -80,7 +80,7 @@ public class Node {
   }
 
   public Boolean isLeft(Node node) {
-    return node.left != null && this == node.left;
+    return node.left == node;
   }
 
   public Boolean isRight(Node node) {

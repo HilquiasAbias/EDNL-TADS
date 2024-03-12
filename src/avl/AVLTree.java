@@ -1,6 +1,8 @@
 package avl;
 
 public class AVLTree {
+  private final String LEFT = "left";
+  private final String RIGHT = "right";
   private Node root;
   private int size;
 
@@ -48,14 +50,6 @@ public class AVLTree {
 
   public Boolean hasAbove(Node node) {
     return node.getAbove() != null;
-  }
-
-  private boolean onlyHaveLeftNode(Node node) {
-    return this.hasLeft(node) && !this.hasRight(node);
-  }
-
-  private boolean onlyHaveRightNode(Node node) {
-    return !this.hasLeft(node) && this.hasRight(node);
   }
 
   private boolean isUnbalanced(Node node) {
@@ -159,6 +153,10 @@ public class AVLTree {
   }
 
   private void updateBalanceFactorAfterInsertion(Node node) {
+    if (isRoot(node)) {
+      return;
+    }
+    
     if (node.getAbove().isRight(node)) {
       node.getAbove().decreaseBalanceFactor();
     } else {
@@ -176,7 +174,31 @@ public class AVLTree {
     }
   }
 
-  private void updateBalanceFactorAfterDeletion(Node node) {}
+  private void updateBalanceFactorAfterDeletion(Node node, String side) {
+    if (isRoot(node)) {
+      return;
+    }
+
+    if (side.equals(LEFT)) {
+      node.decreaseBalanceFactor();
+    } else if (side.equals(RIGHT)) {
+      node.increaseBalanceFactor();
+    }
+
+    if (this.isUnbalanced(node.getAbove())) {
+      this.rotate(node.getAbove());
+
+      return;
+    } else if (node.getBalanceFactor() != 0 || isRoot(node)) {
+      return;
+    } else {
+      if (node.isLeft(node.getAbove())) {
+        this.updateBalanceFactorAfterDeletion(node.getAbove(), LEFT);
+      } else {
+        this.updateBalanceFactorAfterDeletion(node.getAbove(), RIGHT);
+      }
+    }
+  }
 
   private Node find(int key, Node current) {
     if (key == current.getKey()) {
@@ -278,43 +300,69 @@ public class AVLTree {
   }
 
   private void deleteWhenIsLeaf(Node node) {
-    Node parent = node.getAbove();
+    Node above = node.getAbove();
 
-    if (parent.isLeft(node)) {
-      parent.setLeft(null);
+    if (above.isLeft(node)) {
+      above.setLeft(null);
     } else {
-      parent.setRight(null);
+      above.setRight(null);
     }
   }
 
   private void deleteWhenIsNotLeaf(Node node) {
-    //System.out.println("delete: " + node.getKey());
-    Node parent = node.getAbove();
-    //System.out.println("parent: " + parent.getKey());
-    
+    Node above = node.getAbove();
+
     if (!hasRight(node)) {
-      parent.setLeft(node.getLeft());
-      node.getLeft().setAbove(parent);
+      String side = null;
+      if (above.isLeft(node)) {
+        above.setLeft(node.getLeft());
+        side = LEFT;
+      } else {
+        above.setRight(node.getLeft());
+        side = RIGHT;
+      }
+      node.getLeft().setAbove(above);
+
+      if (node.getLeft().isLeaf()) {
+        updateBalanceFactorAfterDeletion(above, side);
+      } else {
+        updateBalanceFactorAfterDeletion(node.getLeft(), side);
+      }
+      //updateBalanceFactorAfterDeletion(node.getLeft(), side);
+      return;
     } else {
       Node sucessor = successor(node);
-      //System.out.println("successor: " + sucessor.getKey());
-      Node aboveSuccessor = sucessor.getAbove();
-
-      if (parent.isLeft(node)) {
-        parent.setLeft(sucessor);
-        sucessor.setAbove(parent);
-      } else {
-        parent.setRight(node.getRight());
-        sucessor.setAbove(parent);
+      Node aboveSucessor = sucessor.getAbove();
+      
+      if (above.getLeft() == (node)) {
+        above.setLeft(sucessor);
+      } else if (above.getRight() == node) {
+        above.setRight(sucessor);
       }
+
+      sucessor.setAbove(above);
 
       if (hasLeft(node)) {
         sucessor.setLeft(node.getLeft());
         node.getLeft().setAbove(sucessor);
       }
 
-      updateBalanceFactorAfterDeletion(aboveSuccessor);
-    }
+      if (node != aboveSucessor) {
+        sucessor.setRight(node.getRight());
+        node.getRight().setAbove(sucessor);
+
+        if (aboveSucessor.isLeft(sucessor)) {
+          aboveSucessor.setLeft(null);
+          updateBalanceFactorAfterDeletion(aboveSucessor, LEFT);
+        } else {
+          aboveSucessor.setRight(null);
+          updateBalanceFactorAfterDeletion(aboveSucessor, RIGHT);
+        }
+      } else {
+        sucessor.setRight(null);
+        updateBalanceFactorAfterDeletion(sucessor, RIGHT);
+      }
+    } 
   }
 
   private Node findForDelete(int key) throws NodeNotFoundException {
