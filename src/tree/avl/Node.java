@@ -1,18 +1,9 @@
-package avl;
+package tree.avl;
 
 public class Node {
   private Node left, right, above;
   private int key, balanceFactor;
   private Object value;
-
-  public Node(int key, Object value, Node above) {
-    this.above = above;
-    this.left = null;
-    this.right = null;
-    this.value = value;
-    this.key = key;
-    this.balanceFactor = 0;
-  }
 
   public Node(int key, Object value) {
     this.above = null;

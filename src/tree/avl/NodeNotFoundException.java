@@ -1,4 +1,4 @@
-package avl;
+package tree.avl;
 
 public class NodeNotFoundException extends Exception {
   private static String message = "Node not found: ";

@@ -1,4 +1,4 @@
-package avl;
+package tree.avl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,10 +29,6 @@ public class AVLTree {
 
   public int size() {
     return size;
-  }
-
-  public Node above(Node node) {
-    return node.getAbove();
   }
 
   public Boolean hasLeft(Node node) {
@@ -369,7 +365,7 @@ public class AVLTree {
 
   public void print() {
     List<List<String>> lines = new ArrayList<List<String>>();
-
+    
     List<Node> level = new ArrayList<Node>();
     List<Node> next = new ArrayList<Node>();
 

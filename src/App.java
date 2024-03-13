@@ -1,4 +1,4 @@
-import avl.*;
+import tree.avl.*;
 
 public class App {
     public static void main(String[] args) throws Exception {

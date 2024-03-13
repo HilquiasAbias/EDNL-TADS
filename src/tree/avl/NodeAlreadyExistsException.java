@@ -1,4 +1,4 @@
-package avl;
+package tree.avl;
 
 public class NodeAlreadyExistsException extends Exception {
   private static String message = "Node already exists: ";
