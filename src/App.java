@@ -21,12 +21,16 @@ public class App {
 
         tree.insert(10, "dez");
         tree.insert(5, "cinco");
-        tree.insert(15, "quinze");
-        tree.insert(2, "dois");
+        // tree.insert(15, "quinze");
+        // tree.insert(2, "dois");
         tree.insert(8, "oito");
-        tree.insert(22, "vinte e dois");
-        tree.insert(9, "nove");
+        // tree.insert(22, "vinte e dois");
+        // tree.insert(9, "nove");
 
-        tree.print();
+        //tree.print();
+
+        System.out.println(tree.search(10));
+        System.out.println(tree.search(5));
+        System.out.println(tree.search(8));
     }
 }

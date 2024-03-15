@@ -15,15 +15,15 @@ public class Node {
     this.color = 0;
   }
 
-  public Node(int key, Object value, int color, Node leaf) {
-    this.above = null;
-    this.left = null;
-    this.right = null;
-    this.value = value;
-    this.key = key;
-    this.balanceFactor = 0;
-    this.color = color;
-  }
+  // public Node(int key, Object value, int color, Node leaf) {
+  //   this.above = null;
+  //   this.left = leaf;
+  //   this.right = leaf;
+  //   this.value = value;
+  //   this.key = key;
+  //   this.balanceFactor = 0;
+  //   this.color = color;
+  // }
 
   public Node(int key, Object value, int color) {
     this.above = null;
