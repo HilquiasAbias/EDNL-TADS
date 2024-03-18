@@ -19,18 +19,38 @@ public class App {
         
         RBTree tree = new RBTree();
 
-        tree.insert(10, "dez");
-        tree.insert(5, "cinco");
+        // tree.insert(10, "dez");
+        // tree.insert(5, "cinco");
         // tree.insert(15, "quinze");
-        // tree.insert(2, "dois");
-        tree.insert(8, "oito");
         // tree.insert(22, "vinte e dois");
-        // tree.insert(9, "nove");
 
-        //tree.print();
+        // System.out.println(tree.search(10));
+        // System.out.println(tree.search(5));
+        // System.out.println(tree.search(15));
+        // System.out.println(tree.search(22));
 
-        System.out.println(tree.search(10));
-        System.out.println(tree.search(5));
-        System.out.println(tree.search(8));
+
+        // tree.insert(10, "dez");
+        // tree.insert(5, "cinco");
+        // tree.insert(15, "quinze");
+        // tree.insert(3, "três");
+
+        // System.out.println(tree.search(10));
+        // System.out.println(tree.search(5));
+        // System.out.println(tree.search(15));
+        // System.out.println(tree.search(3));
+
+        tree.createNodesForTest();
+
+        tree.insert(96, "");
+
+        System.out.println(tree.search(30));
+        System.out.println(tree.search(13));
+        System.out.println(tree.search(53));
+
+        System.out.println(tree.search(83));
+        System.out.println(tree.search(63));
+        System.out.println(tree.search(93));
+
     }
 }

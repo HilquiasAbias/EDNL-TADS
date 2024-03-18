@@ -42,45 +42,18 @@ public class RBTree {
     return node.getAbove() != null;
   }
 
-  private boolean isUnbalanced(Node node) {
-    return node.getBalanceFactor() == 3 || node.getBalanceFactor() == -3;
-  }
-
-  private void updateBalanceFactorAfterInsertion(Node node) {
-    if (isRoot(node)) {
-      return;
-    }
-    
-    if (node.getAbove().isRight(node)) {
-      node.getAbove().decreaseBalanceFactor();
-    } else {
-      node.getAbove().increaseBalanceFactor();
-    }
-
-    if (this.isUnbalanced(node.getAbove())) {
-      this.rotate(node.getAbove());
-
-      return;
-    } else if (node.getAbove().getBalanceFactor() == 0 || isRoot(node.getAbove())) {
-      return;
-    } else {
-      this.updateBalanceFactorAfterInsertion(node.getAbove());
-    }
-  }
-
-  private void rotate(Node node) {
-    if (node.getBalanceFactor() == 3 || node.getBalanceFactor() == 2) {
-      System.out.println(node.getBalanceFactor());
-      if (node.getLeft().getBalanceFactor() >= 0) {
-        rightRotation(node);
-      } else {
+  private void rotate(Node node) { // node = t
+    if (hasLeft(node)) {
+      if (hasRight(node.getLeft())) {
         doubleRightRotation(node);
-      }
-    } else if (node.getBalanceFactor() == -3 || node.getBalanceFactor() == -2) {
-      if (node.getRight().getBalanceFactor() <= 0) {
-        leftRotation(node);
       } else {
+        rightRotation(node);
+      }
+    } else {
+      if (hasLeft(node.getRight())) {
         doubleLeftRototion(node);
+      } else {
+        leftRotation(node);
       }
     }
   }
@@ -105,12 +78,6 @@ public class RBTree {
     
     right.setLeft(node);
     node.setAbove(right);
-
-    int newNodeBalanceFactor = node.getBalanceFactor() + 1 - Math.min(right.getBalanceFactor(), 0);
-    int newRightBalanceFactor = right.getBalanceFactor() + 1 + Math.max(newNodeBalanceFactor, 0);
-
-    node.setBalanceFactor(newNodeBalanceFactor);
-    right.setBalanceFactor(newRightBalanceFactor);
   }
 
   private void rightRotation(Node node) {
@@ -133,12 +100,6 @@ public class RBTree {
     
     left.setRight(node);
     node.setAbove(left);
-
-    int newNodeBalanceFactor = node.getBalanceFactor() - 1 - Math.max(left.getBalanceFactor(), 0);
-    int newRightBalanceFactor = left.getBalanceFactor() - 1 + Math.min(newNodeBalanceFactor, 0);
-
-    node.setBalanceFactor(newNodeBalanceFactor);
-    left.setBalanceFactor(newRightBalanceFactor);
   }
 
   private void doubleLeftRototion(Node node) {
@@ -251,7 +212,6 @@ public class RBTree {
       }
 
       node.setAbove(lastNode);
-      this.updateBalanceFactorAfterInsertion(node);
       size++;
       checkIntegrityOfRulesAfterInsertion(node);
       return node;
@@ -263,8 +223,10 @@ public class RBTree {
 
   private void checkIntegrityOfRulesAfterInsertion(Node insertedNode) {
     Node above = insertedNode.getAbove();
-
+    System.out.println("above2: " + above.getColor());
+    System.out.println(BLACK);
     if (above.getColor() == BLACK) {
+      System.out.println("inserção caso 1");
       return;
     }
 
@@ -272,10 +234,16 @@ public class RBTree {
   }
 
   private void recolorAboveAndNextToIt(Node node) {
+    System.out.println("recolorAboveAndNextToIt");
+    System.out.println(node);
     Node above = node.getAbove();
     Node nextToAbove = getNextToAbove(node);
+
+    System.out.println("above: " + above);
+    System.out.println("nextToAbove: " + nextToAbove);
     
     if (nextToAbove != null && nextToAbove.getColor() == RED) {
+      System.out.println("inserção caso 2");
       node.setColor(BLACK);
       nextToAbove.setColor(BLACK);
 
@@ -285,22 +253,59 @@ public class RBTree {
       
       above.setColor(RED);
 
-      recolorAboveAndNextToIt(above);
-    } else { // TODO: verificar como a árvore fica caso above seja rubro
-      if (above.getColor() == BLACK) {
-        rotate(above);
-        System.out.println("rotate: " + above);
-      }
+      recolorAboveAndNextToIt(above.getAbove());
+    } else {
+      System.out.println("inserção caso 3");
+      //System.out.println("rotate: " + above);
+      rotate(above);
     }
   }
 
   private Node getNextToAbove(Node node) {
     Node above = node.getAbove();
+    System.out.println("above: " + above);
     if (above.isLeft(node)) {
       return above.getRight();
     } else {
       return above.getLeft();
     }
+  }
+
+  public void createNodesForTest() {
+    root = new Node(30, "", BLACK);
+    Node node13red = new Node(13, "", RED);
+    Node node53red = new Node(53, "", RED);
+    root.setLeft(node13red);
+    root.setRight(node53red);
+    node13red.setAbove(root);
+    node53red.setAbove(root);
+
+    Node node8black = new Node(8, "", BLACK);
+    Node node23black = new Node(23, "", BLACK);
+    Node node43black = new Node(43, "", BLACK);
+    Node node83black = new Node(83, "", BLACK);
+
+    node13red.setLeft(node8black);
+    node13red.setRight(node23black);
+    node8black.setAbove(node13red);
+    node23black.setAbove(node13red);
+
+    node53red.setLeft(node43black);
+    node53red.setRight(node83black);
+
+    Node node63red = new Node(63, "", RED);
+    Node node93red = new Node(93, "", RED);
+
+    node83black.setLeft(node63red);
+    node83black.setRight(node93red);
+
+    node43black.setAbove(node53red);
+    node83black.setAbove(node53red);
+
+    node63red.setAbove(node83black);
+    node93red.setAbove(node83black);
+
+    print();
   }
 
   public void print() {
@@ -326,7 +331,7 @@ public class RBTree {
           next.add(null);
           next.add(null);
         } else {
-          String aa = String.valueOf(n.getKey()) + "(BF=" + n.getBalanceFactor() + ", C=" + (n.getColor() == 0 ? "R" : "B" ) + ")";
+          String aa = String.valueOf(n.getKey()) + "(" + (n.getColor() == 0 ? "RED" : "BLACK" ) + ")";
           line.add(aa);
           if (aa.length() > widest) widest = aa.length();
 

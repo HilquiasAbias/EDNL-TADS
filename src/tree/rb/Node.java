@@ -2,7 +2,7 @@ package tree.rb;
 
 public class Node {
   private Node left, right, above;
-  private int key, balanceFactor, color;
+  private int key, color;
   private Object value;
 
   public Node(int key, Object value, Node leaf) {
@@ -11,7 +11,6 @@ public class Node {
     this.right = leaf;
     this.value = value;
     this.key = key;
-    this.balanceFactor = 0;
     this.color = 0;
   }
 
@@ -31,7 +30,6 @@ public class Node {
     this.right = null;
     this.value = value;
     this.key = key;
-    this.balanceFactor = 0;
     this.color = color;
   }
 
@@ -68,22 +66,6 @@ public class Node {
     this.key = key;
   }
 
-  public int getBalanceFactor() {
-    return this.balanceFactor;
-  }
-
-  public void setBalanceFactor(int balanceFactor) {
-    this.balanceFactor = balanceFactor;
-  }
-
-  public void increaseBalanceFactor() {
-    this.balanceFactor++;
-  }
-
-  public void decreaseBalanceFactor() {
-    this.balanceFactor--;
-  }
-
   public Object getValue() {
     return this.value;
   }
@@ -117,8 +99,9 @@ public class Node {
     Integer left = this.left == null ? 0 : this.left.getKey();
     Integer right = this.right == null ? 0 : this.right.getKey();
     Integer above = this.above == null ? 0 : this.above.getKey();
+    String color = this.color == 0 ? "RED" : "BLACK";
     return "Node {\n key=" + key +
-        ",\n balanceFactor=" + balanceFactor +
+        ",\n color=" + color +
         ",\n value=" + value +
         ",\n left=" + left +
         ",\n right=" + right +
