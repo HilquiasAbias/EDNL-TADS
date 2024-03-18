@@ -42,21 +42,50 @@ public class RBTree {
     return node.getAbove() != null;
   }
 
-  private void rotate(Node node) { // node = t
+  private void rotate(Node node) {
     if (hasLeft(node)) {
       if (hasRight(node.getLeft())) {
         doubleRightRotation(node);
+        recolorAfterDoubleRightRotation(node);
       } else {
         rightRotation(node);
+        recolorAfterRightRotation(node);
       }
     } else {
       if (hasLeft(node.getRight())) {
         doubleLeftRototion(node);
+        recolorAfterDoubleLeftRotation(node);
       } else {
         leftRotation(node);
+        recolorAfterLeftRotation(node);
       }
     }
   }
+
+  private void recolorAfterRightRotation(Node node) {
+    node.setColor(RED);
+    node.getAbove().setColor(BLACK);
+    node.getAbove().getLeft().setColor(RED);
+  }
+
+  private void recolorAfterLeftRotation(Node node) {
+    node.setColor(RED);
+    node.getAbove().setColor(BLACK);
+    node.getAbove().getRight().setColor(RED);
+  }
+
+  private void recolorAfterDoubleRightRotation(Node node) {
+    node.setColor(RED);
+    node.getAbove().setColor(BLACK);
+    node.getAbove().getRight().setColor(RED);
+  }
+
+  private void recolorAfterDoubleLeftRotation(Node node) {
+    node.setColor(RED);
+    node.getAbove().setColor(BLACK);
+    node.getAbove().getLeft().setColor(RED);
+  }
+
 
   private void leftRotation(Node node) {
     Node right = node.getRight();
@@ -73,7 +102,11 @@ public class RBTree {
       right.setAbove(null);
     } else {
       right.setAbove(node.getAbove());
-      node.getAbove().setRight(right);
+      if (node.getAbove().isLeft(node)) {
+        node.getAbove().setLeft(right);
+      } else {
+        node.getAbove().setRight(right);
+      }
     }
     
     right.setLeft(node);
@@ -95,7 +128,11 @@ public class RBTree {
       left.setAbove(null);
     } else {
       left.setAbove(node.getAbove());
-      node.getAbove().setRight(left);
+      if (node.getAbove().isLeft(node)) {
+        node.getAbove().setLeft(left);
+      } else {
+        node.getAbove().setRight(left);
+      }
     }
     
     left.setRight(node);
@@ -165,7 +202,6 @@ public class RBTree {
     }
   }
 
-
   private Node findForInsert(int key) throws NodeAlreadyExistsException {
     if (key == root.getKey()) {
       return root;
@@ -223,10 +259,7 @@ public class RBTree {
 
   private void checkIntegrityOfRulesAfterInsertion(Node insertedNode) {
     Node above = insertedNode.getAbove();
-    System.out.println("above2: " + above.getColor());
-    System.out.println(BLACK);
     if (above.getColor() == BLACK) {
-      System.out.println("inserção caso 1");
       return;
     }
 
@@ -234,16 +267,10 @@ public class RBTree {
   }
 
   private void recolorAboveAndNextToIt(Node node) {
-    System.out.println("recolorAboveAndNextToIt");
-    System.out.println(node);
     Node above = node.getAbove();
     Node nextToAbove = getNextToAbove(node);
-
-    System.out.println("above: " + above);
-    System.out.println("nextToAbove: " + nextToAbove);
     
     if (nextToAbove != null && nextToAbove.getColor() == RED) {
-      System.out.println("inserção caso 2");
       node.setColor(BLACK);
       nextToAbove.setColor(BLACK);
 
@@ -255,15 +282,12 @@ public class RBTree {
 
       recolorAboveAndNextToIt(above.getAbove());
     } else {
-      System.out.println("inserção caso 3");
-      //System.out.println("rotate: " + above);
       rotate(above);
     }
   }
 
   private Node getNextToAbove(Node node) {
     Node above = node.getAbove();
-    System.out.println("above: " + above);
     if (above.isLeft(node)) {
       return above.getRight();
     } else {
