@@ -3,21 +3,21 @@ import tree.rb.*;
 
 public class App {
     public static void main(String[] args) throws Exception {
-        // AVLTree tree = new AVLTree();
+        AVLTree tree = new AVLTree();
 
-        // tree.insert(10, "dez");
-        // tree.insert(5, "cinco");
-        // tree.insert(15, "quinze");
+        tree.insert(10, "dez");
+        //tree.insert(5, "cinco");
+        tree.insert(15, "quinze");
         // tree.insert(2, "dois");
         // tree.insert(8, "oito");
-        // tree.insert(22, "vinte e dois");
+        tree.insert(12, "vinte e dois");
 
         // tree.insert(25, "vinte e cinco");
         // tree.delete(5);
 
-        // tree.print();
+        tree.print();
 
-        RBTree tree = new RBTree();
+        //RBTree tree = new RBTree();
 
         // caso 1
         // tree.insert(10, "dez");
@@ -61,12 +61,12 @@ public class App {
         // System.out.println(tree.search(15));
 
         // caso 3d (direita dupla)
-        tree.insert(10, "dez");
-        tree.insert(8, "oito");
-        tree.insert(9, "nove");
+        // tree.insert(10, "dez");
+        // tree.insert(8, "oito");
+        // tree.insert(9, "nove");
 
-        System.out.println(tree.search(10));
-        System.out.println(tree.search(8));
-        System.out.println(tree.search(9));
+        // System.out.println(tree.search(10));
+        // System.out.println(tree.search(8));
+        // System.out.println(tree.search(9));
     }
 }

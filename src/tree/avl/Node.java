@@ -71,7 +71,7 @@ public class Node {
   }
 
   public Boolean isLeft(Node node) {
-    return node.left == node;
+    return this.left == node;
   }
 
   public Boolean isRight(Node node) {

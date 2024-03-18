@@ -92,7 +92,11 @@ public class AVLTree {
       right.setAbove(null);
     } else {
       right.setAbove(node.getAbove());
-      node.getAbove().setRight(right);
+      if (node.getAbove().isLeft(node)) {
+        node.getAbove().setLeft(right);
+      } else {
+        node.getAbove().setRight(right);
+      }
     }
     
     right.setLeft(node);
@@ -120,7 +124,11 @@ public class AVLTree {
       left.setAbove(null);
     } else {
       left.setAbove(node.getAbove());
-      node.getAbove().setRight(left);
+      if (node.getAbove().isLeft(node)) {
+        node.getAbove().setLeft(left);
+      } else {
+        node.getAbove().setRight(left);
+      }
     }
     
     left.setRight(node);
