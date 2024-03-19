@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RBTree {
-  private final String LEFT = "left";
-  private final String RIGHT = "right";
   private final int RED = 0;
   private final int BLACK = 1;
   private final int DOUBLE_BLACK = 2;
@@ -257,6 +255,83 @@ public class RBTree {
     }
   }
 
+  public Node delete(int key) {
+    try {
+      Node node = findForDelete(key);
+
+      if (node.isLeaf()) {
+        deleteWhenIsLeaf(node);
+      } else {
+        deleteWhenIsNotLeaf(node);
+      }
+
+      size--;
+      return node;
+    } catch (NodeNotFoundException e) {
+      System.out.println(e.getMessage());
+      return null;
+    }
+  }
+
+  private void deleteWhenIsNotLeaf(Node node) {
+    Node above = node.getAbove();
+    Node successor = null;
+
+    if (!hasRight(node)) {
+      if (above.getLeft() == node) {
+        above.setLeft(node.getLeft());
+      } else {
+        above.setRight(node.getLeft());
+      }
+
+      node.getLeft().setAbove(above);
+      node.setAbove(null);
+
+      return;
+    } else {
+      successor = successor(node);
+      Node aboveSuccessor = successor.getAbove();
+      
+      if (above.getLeft() == (node)) {
+        above.setLeft(successor);
+      } else if (above.getRight() == node) {
+        above.setRight(successor);
+      }
+
+      successor.setAbove(above);
+
+      if (hasLeft(node)) {
+        successor.setLeft(node.getLeft());
+        node.getLeft().setAbove(successor);
+      }
+
+      if (node != aboveSuccessor) {
+        successor.setRight(node.getRight());
+        node.getRight().setAbove(successor);
+
+        if (aboveSuccessor.isLeft(successor)) {
+          aboveSuccessor.setLeft(null);
+        } else {
+          aboveSuccessor.setRight(null);
+        }
+      } else {
+        successor.setRight(null);
+      }
+    }
+
+    checkIntegrityOfRulesAfterDeletion(node, successor);
+  }
+
+  private void deleteWhenIsLeaf(Node node) {
+    Node above = node.getAbove();
+
+    if (above.isLeft(node)) {
+      above.setLeft(null);
+    } else {
+      above.setRight(null);
+    }
+  }
+
   private void checkIntegrityOfRulesAfterInsertion(Node insertedNode) {
     Node above = insertedNode.getAbove();
     if (above.getColor() == BLACK) {
@@ -264,6 +339,20 @@ public class RBTree {
     }
 
     recolorAboveAndNextToIt(above);
+  }
+
+  private void checkIntegrityOfRulesAfterDeletion(Node removedNode, Node insertedNode) {
+    if (removedNode.getColor() == RED && insertedNode.getColor() == RED) {
+      return;
+    }
+
+    if (removedNode.getColor() == BLACK && insertedNode.getColor() == RED) {
+      insertedNode.setColor(BLACK);
+    }
+
+    if (removedNode.getColor() == BLACK && insertedNode.getColor() == BLACK) {
+      
+    }
   }
 
   private void recolorAboveAndNextToIt(Node node) {
@@ -328,6 +417,43 @@ public class RBTree {
 
     node63red.setAbove(node83black);
     node93red.setAbove(node83black);
+
+    print();
+  }
+
+  public void createNodesForTestDeletionAtFirstSituation() {
+    root = new Node(7, "", BLACK);
+    Node node2red = new Node(2, "", RED);
+    root.setLeft(node2red);
+    node2red.setAbove(root);
+
+    Node node1black = new Node(1, "", RED);
+    Node node5black = new Node(5, "", RED);
+    Node node4red = new Node(4, "", RED);
+
+    node2red.setLeft(node1black);
+    node1black.setAbove(node2red);
+    node2red.setRight(node5black);
+    node5black.setAbove(node2red);
+
+    node5black.setLeft(node4red);
+    node4red.setAbove(node5black);
+    print();
+  }
+
+  public void createNodesForTestDeletionAtSecondSituation() {
+    root = new Node(7, "", BLACK);
+    Node node2black = new Node(2, "", BLACK);
+    root.setLeft(node2black);
+    node2black.setAbove(root);
+
+    Node node1black = new Node(1, "", RED);
+    Node node5black = new Node(5, "", RED);
+
+    node2black.setLeft(node1black);
+    node1black.setAbove(node2black);
+    node2black.setRight(node5black);
+    node5black.setAbove(node2black);
 
     print();
   }
