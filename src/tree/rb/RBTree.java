@@ -287,6 +287,8 @@ public class RBTree {
       node.getLeft().setAbove(above);
       node.setAbove(null);
 
+      checkIntegrityOfRulesAfterDeletion(node, node.getLeft());
+      
       return;
     } else {
       successor = successor(node);
@@ -341,17 +343,89 @@ public class RBTree {
     recolorAboveAndNextToIt(above);
   }
 
-  private void checkIntegrityOfRulesAfterDeletion(Node removedNode, Node insertedNode) {
-    if (removedNode.getColor() == RED && insertedNode.getColor() == RED) {
+  private void checkIntegrityOfRulesAfterDeletion(Node removedNode, Node successorNode) {
+    if (removedNode.getColor() == RED && successorNode.getColor() == RED) {
+      return;
+    }
+    
+    if (removedNode.getColor() == BLACK && successorNode.getColor() == RED) {
+      successorNode.setColor(BLACK);
       return;
     }
 
-    if (removedNode.getColor() == BLACK && insertedNode.getColor() == RED) {
-      insertedNode.setColor(BLACK);
-    }
+    Node above = successorNode.getAbove();
 
-    if (removedNode.getColor() == BLACK && insertedNode.getColor() == BLACK) {
-      
+    if (removedNode.getColor() == BLACK && successorNode.getColor() == BLACK) {
+      Node nextToNode = getNextToNode(successorNode);
+
+      if ( // case 1
+        nextToNode != null && nextToNode.getColor() == RED 
+        && above != null && above.getColor() == BLACK
+      ) {
+        // left rotation
+        // recolor nextToNode to black
+        // recolor successor and above to red
+        // return
+        leftRotation(above);
+        nextToNode.setColor(BLACK);
+        successorNode.setColor(RED);
+        above.setColor(RED);
+        return;
+      }
+
+      if ( // case 2a
+        nextToNode != null && nextToNode.getColor() == BLACK
+        && above != null && above.getColor() == BLACK
+        && isLeftBlack(nextToNode) && isRightBlack(nextToNode)
+      ) {
+        // recolor nextToNode to red
+        // return
+        nextToNode.setColor(RED);
+        return;
+      }
+
+      if ( // case 2b
+        nextToNode != null && nextToNode.getColor() == BLACK
+        && above != null && above.getColor() == RED
+        && isLeftBlack(nextToNode) && isRightBlack(nextToNode)
+      ) {
+        // recolor nextToNode to red
+        // recolor above to black
+        // return
+        nextToNode.setColor(RED);
+        above.setColor(BLACK);
+        return;
+      }
+
+      if ( // case 3
+        nextToNode != null && nextToNode.getColor() == BLACK
+        && isLeftRed(nextToNode) && isRightBlack(nextToNode)
+      ) {
+        // right rotation in nextToNode
+        // swap colors between nextToNode and its left
+        // return
+        rightRotation(nextToNode);
+        int nextToNodeColor = nextToNode.getColor();
+        nextToNode.setColor(nextToNode.getLeft().getColor());
+        nextToNode.getLeft().setColor(nextToNodeColor);
+        return;
+      }
+
+      if ( // case 4
+        nextToNode != null && nextToNode.getColor() == BLACK
+        && isRightRed(nextToNode)
+      ) {
+        // left rotation in above
+        // recolor nextToNode to above color
+        // recolor above to black
+        // recolor nextToNode right to black
+        // return
+        leftRotation(above);
+        nextToNode.setColor(above.getColor());
+        above.setColor(BLACK);
+        nextToNode.getRight().setColor(BLACK);
+        return;
+      }
     }
   }
 
@@ -375,7 +449,48 @@ public class RBTree {
     }
   }
 
+  private boolean isLeftBlack(Node node) {
+    if (!hasLeft(node)) {
+      return true;
+    }
+
+    return node.getLeft().getColor() == BLACK;
+  }
+
+  private boolean isRightBlack(Node node) {
+    if (!hasRight(node)) {
+      return true;
+    }
+
+    return node.getRight().getColor() == BLACK;
+  }
+
+  private boolean isLeftRed(Node node) {
+    if (!hasLeft(node)) {
+      return false;
+    }
+
+    return node.getLeft().getColor() == RED;
+  }
+
+  private boolean isRightRed(Node node) {
+    if (!hasRight(node)) {
+      return false;
+    }
+
+    return node.getRight().getColor() == RED;
+  }
+
   private Node getNextToAbove(Node node) {
+    Node above = node.getAbove();
+    if (above.isLeft(node)) {
+      return above.getRight();
+    } else {
+      return above.getLeft();
+    }
+  }
+
+  private Node getNextToNode(Node node) {
     Node above = node.getAbove();
     if (above.isLeft(node)) {
       return above.getRight();
