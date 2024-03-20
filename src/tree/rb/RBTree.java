@@ -6,8 +6,6 @@ import java.util.List;
 public class RBTree {
   private final int RED = 0;
   private final int BLACK = 1;
-  private final int DOUBLE_BLACK = 2;
-  //private final Node GLOBAL_BLACK_LEAF = new Node(0, null, BLACK);
   private Node root;
   private int size;
 
@@ -344,10 +342,12 @@ public class RBTree {
   }
 
   private void checkIntegrityOfRulesAfterDeletion(Node removedNode, Node successorNode) {
+    // first situation
     if (removedNode.getColor() == RED && successorNode.getColor() == RED) {
       return;
     }
     
+    // second situation
     if (removedNode.getColor() == BLACK && successorNode.getColor() == RED) {
       successorNode.setColor(BLACK);
       return;
@@ -355,6 +355,7 @@ public class RBTree {
 
     Node above = successorNode.getAbove();
 
+    // third situation
     if (removedNode.getColor() == BLACK && successorNode.getColor() == BLACK) {
       Node nextToNode = getNextToNode(successorNode);
 
@@ -362,14 +363,9 @@ public class RBTree {
         nextToNode != null && nextToNode.getColor() == RED 
         && above != null && above.getColor() == BLACK
       ) {
-        // left rotation
-        // recolor nextToNode to black
-        // recolor successor and above to red
-        // return
-        leftRotation(above);
         nextToNode.setColor(BLACK);
-        successorNode.setColor(RED);
-        above.setColor(RED);
+        leftRotation(above);
+        successorNode.getAbove().setColor(RED);
         return;
       }
 
@@ -378,8 +374,6 @@ public class RBTree {
         && above != null && above.getColor() == BLACK
         && isLeftBlack(nextToNode) && isRightBlack(nextToNode)
       ) {
-        // recolor nextToNode to red
-        // return
         nextToNode.setColor(RED);
         return;
       }
@@ -389,9 +383,6 @@ public class RBTree {
         && above != null && above.getColor() == RED
         && isLeftBlack(nextToNode) && isRightBlack(nextToNode)
       ) {
-        // recolor nextToNode to red
-        // recolor above to black
-        // return
         nextToNode.setColor(RED);
         above.setColor(BLACK);
         return;
@@ -401,13 +392,10 @@ public class RBTree {
         nextToNode != null && nextToNode.getColor() == BLACK
         && isLeftRed(nextToNode) && isRightBlack(nextToNode)
       ) {
-        // right rotation in nextToNode
-        // swap colors between nextToNode and its left
-        // return
-        rightRotation(nextToNode);
         int nextToNodeColor = nextToNode.getColor();
         nextToNode.setColor(nextToNode.getLeft().getColor());
         nextToNode.getLeft().setColor(nextToNodeColor);
+        rightRotation(nextToNode);
         return;
       }
 
@@ -415,17 +403,17 @@ public class RBTree {
         nextToNode != null && nextToNode.getColor() == BLACK
         && isRightRed(nextToNode)
       ) {
-        // left rotation in above
-        // recolor nextToNode to above color
-        // recolor above to black
-        // recolor nextToNode right to black
-        // return
-        leftRotation(above);
         nextToNode.setColor(above.getColor());
-        above.setColor(BLACK);
         nextToNode.getRight().setColor(BLACK);
+        above.setColor(BLACK);
+        leftRotation(above);
         return;
       }
+    }
+  
+    if (removedNode.getColor() == RED && successorNode.getColor() == BLACK) {
+      successorNode.setColor(RED);
+      return;
     }
   }
 
@@ -533,7 +521,7 @@ public class RBTree {
     node63red.setAbove(node83black);
     node93red.setAbove(node83black);
 
-    print();
+    //print();
   }
 
   public void createNodesForTestDeletionAtFirstSituation() {
@@ -542,8 +530,8 @@ public class RBTree {
     root.setLeft(node2red);
     node2red.setAbove(root);
 
-    Node node1black = new Node(1, "", RED);
-    Node node5black = new Node(5, "", RED);
+    Node node1black = new Node(1, "", BLACK);
+    Node node5black = new Node(5, "", BLACK);
     Node node4red = new Node(4, "", RED);
 
     node2red.setLeft(node1black);
@@ -554,6 +542,7 @@ public class RBTree {
     node5black.setLeft(node4red);
     node4red.setAbove(node5black);
     print();
+    System.err.println("\n-------------------------------------------------");
   }
 
   public void createNodesForTestDeletionAtSecondSituation() {
@@ -571,6 +560,154 @@ public class RBTree {
     node5black.setAbove(node2black);
 
     print();
+    System.err.println("\n-------------------------------------------------");
+  }
+
+  public void createNodesForTestDeletionAtThirdSituationCaseOne() {
+    root = new Node(7, "", BLACK);
+
+    Node node6black = new Node(6, "", BLACK);
+    Node node5black = new Node(5, "", BLACK);
+    Node node9red = new Node(9, "", RED);
+    node6black.setLeft(node5black);
+    node5black.setAbove(node6black);
+    root.setLeft(node6black);
+    root.setRight(node9red);
+    node9red.setAbove(root);
+    node6black.setAbove(root);
+
+    Node node8black = new Node(8, "", BLACK);
+    Node node10black = new Node(10, "", BLACK);
+
+    node9red.setLeft(node8black);
+    node8black.setAbove(node9red);
+    node9red.setRight(node10black);
+    node10black.setAbove(node9red);
+    
+    print();
+    System.err.println("\n-------------------------------------------------");
+  }
+
+  public void createNodesForTestDeletionAtThirdSituationCaseTwoA() {
+    root = new Node(7, "", BLACK);
+
+    Node node6black = new Node(6, "", BLACK);
+    Node node5black = new Node(5, "", BLACK);
+    Node node9black = new Node(9, "", BLACK);
+    node6black.setLeft(node5black);
+    node5black.setAbove(node6black);
+    root.setLeft(node6black);
+    root.setRight(node9black);
+    node9black.setAbove(root);
+    node6black.setAbove(root);
+
+    Node node8black = new Node(8, "", BLACK);
+    Node node10black = new Node(10, "", BLACK);
+
+    node9black.setLeft(node8black);
+    node8black.setAbove(node9black);
+    node9black.setRight(node10black);
+    node10black.setAbove(node9black);
+    
+    print();
+    System.err.println("\n-------------------------------------------------");
+  }
+
+  public void createNodesForTestDeletionAtThirdSituationCaseTwoB() {
+    root = new Node(7, "", RED);
+
+    Node node6black = new Node(6, "", BLACK);
+    Node node5black = new Node(5, "", BLACK);
+    Node node9black = new Node(9, "", BLACK);
+    node6black.setLeft(node5black);
+    node5black.setAbove(node6black);
+    root.setLeft(node6black);
+    root.setRight(node9black);
+    node9black.setAbove(root);
+    node6black.setAbove(root);
+
+    Node node8black = new Node(8, "", BLACK);
+    Node node10black = new Node(10, "", BLACK);
+
+    node9black.setLeft(node8black);
+    node8black.setAbove(node9black);
+    node9black.setRight(node10black);
+    node10black.setAbove(node9black);
+    
+    print();
+    System.err.println("\n-------------------------------------------------");
+  }
+
+  public void createNodesForTestDeletionAtThirdSituationCaseThree() {
+    root = new Node(7, "", BLACK);
+
+    Node node6black = new Node(6, "", BLACK);
+    Node node5black = new Node(5, "", BLACK);
+    Node node9black = new Node(9, "", BLACK);
+    node6black.setLeft(node5black);
+    node5black.setAbove(node6black);
+    root.setLeft(node6black);
+    root.setRight(node9black);
+    node9black.setAbove(root);
+    node6black.setAbove(root);
+
+    Node node8red = new Node(8, "", RED);
+    Node node10black = new Node(10, "", BLACK);
+
+    node9black.setLeft(node8red);
+    node8red.setAbove(node9black);
+    node9black.setRight(node10black);
+    node10black.setAbove(node9black);
+    
+    print();
+    System.err.println("\n-------------------------------------------------");
+  }
+
+  public void createNodesForTestDeletionAtThirdSituationCaseFour() {
+    root = new Node(7, "", BLACK);
+
+    Node node6black = new Node(6, "", BLACK);
+    Node node5black = new Node(5, "", BLACK);
+    Node node9black = new Node(9, "", BLACK);
+    node6black.setLeft(node5black);
+    node5black.setAbove(node6black);
+    root.setLeft(node6black);
+    root.setRight(node9black);
+    node9black.setAbove(root);
+    node6black.setAbove(root);
+
+    Node node8red = new Node(8, "", RED);
+    Node node10red = new Node(10, "", RED);
+
+    node9black.setLeft(node8red);
+    node8red.setAbove(node9black);
+    node9black.setRight(node10red);
+    node10red.setAbove(node9black);
+    
+    print();
+    System.err.println("\n-------------------------------------------------");
+  }
+
+  public void createNodesForTestDeletionAtFourthSituation() {
+    root = new Node(7, "", BLACK);
+
+    Node node5black = new Node(5, "", BLACK);
+    Node node9red = new Node(9, "", RED);
+    node5black.setAbove(root);
+    root.setLeft(node5black);
+    root.setRight(node9red);
+    node9red.setAbove(root);
+
+    Node node8black = new Node(8, "", BLACK);
+    Node node10black = new Node(10, "", BLACK);
+
+    node9red.setLeft(node8black);
+    node8black.setAbove(node9red);
+    node9red.setRight(node10black);
+    node10black.setAbove(node9red);
+    
+    print();
+    System.err.println("\n-------------------------------------------------");
   }
 
   public void print() {
