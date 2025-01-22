@@ -1,3 +1,5 @@
+package tree;
+
 import tree.avl.*;
 import tree.rb.*;
 

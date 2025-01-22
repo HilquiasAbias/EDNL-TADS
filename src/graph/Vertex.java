@@ -1,12 +1,18 @@
+package graph;
+
 import java.util.ArrayList;
 
 public class Vertex {
     private Object value;
-    private ArrayList<Edge> edgeList;
+    private ArrayList<Edge> incomingEdges;
+    private ArrayList<Edge> outgoingEdges;
+    private ArrayList<Edge> undirectedEdges;
 
     public Vertex(Object value) {
         this.value = value;
-        this.edgeList = new ArrayList<Edge>();
+        this.incomingEdges = new ArrayList<Edge>();
+        this.outgoingEdges = new ArrayList<Edge>();
+        this.undirectedEdges = new ArrayList<Edge>();
     }
 
     public Object getValue() {
@@ -17,18 +23,50 @@ public class Vertex {
         this.value = value;
     }
 
+    public ArrayList<Edge> getIncomingEdges() {
+        return incomingEdges;
+    }
+
+    public ArrayList<Edge> getOutgoingEdges() {
+        return outgoingEdges;
+    }
+
+    public ArrayList<Edge> getUndirectedEdges() {
+        return undirectedEdges;
+    }
+
+    public void addIncomingEdge(Edge edge) {
+        incomingEdges.add(edge);
+    }
+
+    public void addOutgoingEdge(Edge edge) {
+        outgoingEdges.add(edge);
+    }
+
+    public void addUndirectedEdge(Edge edge) {
+        undirectedEdges.add(edge);
+    }
+
+    public void removeIncomingEdge(Edge edge) {
+        incomingEdges.remove(edge);
+    }
+
+    public void removeOutgoingEdge(Edge edge) {
+        outgoingEdges.remove(edge);
+    }
+
+    public void removeUndirectedEdge(Edge edge) {
+        undirectedEdges.remove(edge);
+    }
+
     public ArrayList<Edge> edges() {
-        return edgeList;
+        ArrayList<Edge> edges = new ArrayList<Edge>();
+        edges.addAll(incomingEdges);
+        edges.addAll(outgoingEdges);
+        return edges;
     }
 
-    public void addEdge(Edge edge) {
-        edgeList.add(edge);
-    }
-
-    public boolean removeEdge(Edge edge) {
-        return edgeList.remove(edge);
-    }
-
+    @Override
     public String toString() {
         return value.toString();
     }

@@ -1,3 +1,5 @@
+package graph;
+
 public class Edge {
     private Object value;
     private Vertex vertexOut;

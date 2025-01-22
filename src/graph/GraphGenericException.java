@@ -1,3 +1,5 @@
+package graph;
+
 public class GraphGenericException extends Exception {
     public GraphGenericException(String message) {
         super(message);
