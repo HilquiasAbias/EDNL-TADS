@@ -21,7 +21,7 @@ class Main {
         Edge e2 = graph.insertEdge(v2, v3, "B-C");
         Edge e3 = graph.insertEdge(v3, v4, "C-D");
         Edge e4 = graph.insertEdge(v4, v1, "D-A");
-        graph.insertDirectedEdge(v1, v3, "A->C");
+        Edge e5 = graph.insertDirectedEdge(v1, v3, "A->C");
 
         System.out.println("\nArestas após inserção:");
         for (Edge e : graph.edgeList) {
@@ -31,24 +31,24 @@ class Main {
         // Verificação de conexões
         System.out.println("\nConexões de cada vértice:");
         for (Vertex v : graph.vertexList) {
-            System.out.println("Vértice: " + v + ", Entradas: " + v.getIncomingEdges() + ", Saídas: " + v.getOutgoingEdges());
+            System.out.println("Vértice: " + v + ", Entradas: " + v.getIncomingEdges() + ", Saídas: " + v.getOutgoingEdges() + ", Não-direcionadas: " + v.getUndirectedEdges());
         }
 
         // Remoção de uma aresta
-        graph.removeEdge(e1);
-        System.out.println("\nArestas após remover A-B:");
-        for (Edge e : graph.edgeList) {
-            System.out.println(e);
-        }
+        // graph.removeEdge(e5);
+        // System.out.println("\nArestas após remover A-C:");
+        // for (Edge e : graph.edgeList) {
+        //     System.out.println(e);
+        // }
 
         // Remoção de um vértice
-        graph.removeVertex(v2);
-        System.out.println("\nVértices após remover B:");
+        graph.removeVertex(v3);
+        System.out.println("\nVértices após remover C:");
         for (Vertex v : graph.vertexList) {
             System.out.println(v);
         }
 
-        System.out.println("\nArestas após remover B:");
+        System.out.println("\nArestas após remover C:");
         for (Edge e : graph.edgeList) {
             System.out.println(e);
         }
@@ -56,7 +56,7 @@ class Main {
         // Verificação final
         System.out.println("\nConexões finais:");
         for (Vertex v : graph.vertexList) {
-            System.out.println("Vértice: " + v + ", Entradas: " + v.getIncomingEdges() + ", Saídas: " + v.getOutgoingEdges());
+            System.out.println("Vértice: " + v + ", Entradas: " + v.getIncomingEdges() + ", Saídas: " + v.getOutgoingEdges() + ", Não-direcionadas: " + v.getUndirectedEdges());
         }
     }
 }
