@@ -2,12 +2,27 @@ package shortestpath;
 
 public class Cell {
     private int type; // 0 - caminho vazio, 1 - parede, 2 - ponto inicial, 3 - saída
-    private Cell up;
-    private Cell down;
-    private Cell left;
-    private Cell right;
+    private Cell up, down, left, right;
     private Cell previous;
     private int cost;
+    private int row;
+    private int col;
+
+    public int getRow() {
+        return row;
+    }
+
+    public void setRow(int row) {
+        this.row = row;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public void setCol(int col) {
+        this.col = col;
+    }
 
     public int getType() {
         return type;
@@ -55,5 +70,13 @@ public class Cell {
 
     public void setCost(int cost) {
         this.cost = cost;
+    }
+
+    public void setPrevious(Cell previous) {
+        this.previous = previous;
+    }
+
+    public Cell getPrevious() {
+        return previous;
     }
 }

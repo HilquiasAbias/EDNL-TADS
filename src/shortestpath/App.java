@@ -1,34 +1,46 @@
 package shortestpath;
 
+import java.io.*;
+import java.util.*;
+
 public class App {
     public static void main(String[] args) {
-        int[][] example = {
-            {1,1,1,1,1,1,1,1,1,1},
-            {1,0,0,0,0,0,0,0,0,1},
-            {1,2,0,0,0,1,0,1,0,1},
-            {1,1,1,1,0,1,0,1,0,1},
-            {1,0,0,0,0,0,0,1,0,1},
-            {1,0,1,1,1,1,1,1,0,3},
-            {1,0,0,0,0,0,0,0,0,1},
-            {1,1,1,1,1,1,1,0,1,1},
-            {3,1,0,0,1,0,0,0,0,1},
-            {1,1,0,1,0,0,1,1,1,1},
-            {1,0,0,0,0,0,0,3,0,1},
-            {1,1,1,1,1,1,1,1,1,1}
-        };
+        String nomeArquivo = "/home/matheus/dev/tads/EDNL-TADS/src/shortestpath/labirinto.dat"; // colocar valor absoluto do arquivo
 
-        // Maze maze = new Maze(example);
-        // maze.printMaze();
+        try (InputStream is = new FileInputStream(nomeArquivo);
+            BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
 
-        // Cell startPoint = maze.getStartPoint();
-        // System.out.println(startPoint);
+            List<int[]> linhas = new ArrayList<>();
+            String linha;
 
-        MazeSolver solver = new MazeSolver(example);
-        
-        System.out.println("Labirinto Inicial:");
-        solver.displayMaze();
-        
-        System.out.println("\nConexões entre as células:");
-        solver.displayConnections();
+            while ((linha = br.readLine()) != null) {
+                int[] linhaInt = new int[linha.length()]; // Criar array de inteiros para essa linha
+                
+                for (int i = 0; i < linha.length(); i++) {
+                    char caractere = linha.charAt(i);
+
+                    if (Character.isDigit(caractere)) { // Apenas números são convertidos
+                        linhaInt[i] = Character.getNumericValue(caractere);
+                    } else {
+                        System.err.println("Caractere inválido na posição [" + linhas.size() + "][" + i + "]: " + caractere);
+                        linhaInt[i] = -1; // Define um valor padrão para caracteres inválidos
+                    }
+                }
+
+                linhas.add(linhaInt);
+            }
+
+            // Converter a lista para matriz
+            int[][] matriz = linhas.toArray(new int[0][]);
+
+            MazeSolver ms = new MazeSolver(matriz);
+
+            ms.test();
+
+        } catch (IOException e) {
+            System.err.println("Erro ao ler o arquivo: " + e.getMessage());
+        }
     }
 }
+
+
